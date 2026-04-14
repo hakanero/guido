@@ -1,7 +1,10 @@
 import { reverseGeocode } from "./utils";
 
-export async function getData(coords: { lat: number; lng: number }, language: string){
-	const apilink = "https://theroamerbackend.onrender.com/audio";
+export async function getData(coords: { lat: number; lng: number }, language: string) {
+	const apilink = import.meta.env.VITE_BACKEND_URL 
+		? `${import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '')}/audio`
+		: "http://localhost:8080/audio";
+
 
 	const imageUrl =
 		"https://www.tclf.org/sites/default/files/thumbnails/image/HarvardUniversity-sig.jpg";

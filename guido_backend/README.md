@@ -1,4 +1,4 @@
-# The Roamer Backend
+# Guido Backend
 
 A Flask-based backend API that generates historical audio descriptions based on GPS coordinates. The service uses Google's Gemini AI to generate contextual descriptions and ElevenLabs for text-to-speech conversion.
 

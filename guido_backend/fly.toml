@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for theroamer-backend
+# fly.toml app configuration file generated for guido-backend
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "theroamer-backend"
+app = "guido-backend"
 primary_region = "bos"
 
 [build]

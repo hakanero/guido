@@ -1,4 +1,4 @@
-# 🦉 TourGuide — Frontend
+# 🦉 Guido — Frontend
 
 This is an interactive web application that provides voice-guided tours using real-time location data. It combines mapping, geolocation, and AI-generated narration to turn your Google Maps into a smart travel companion.
 
@@ -41,8 +41,8 @@ This is an interactive web application that provides voice-guided tours using re
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/hakanero/tourguide.git
-   cd tourguide/frontend
+   git clone https://github.com/hakanero/guido.git
+   cd guido/guido_frontend
    ```
 2. **Configure environment variables**                    
   Create a .env file in the frontend directory and add:

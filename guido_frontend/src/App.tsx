@@ -208,7 +208,7 @@ export default function App() {
 				</select>
 			</div>
 			<div className="absolute top-2 left-2 z-10 flex flex-row items-center text-white font-semibold gap-2 text-xl">
-				<CompassIcon size={32} /> Roamer AI
+				<CompassIcon size={32} /> Guido
 			</div>
 			<div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
 
