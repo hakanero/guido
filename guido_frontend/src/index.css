@@ -4,5 +4,17 @@
   --color-crimson: #A51C30;
   --color-dark-blue: #0e2a52;
   --color-aqua-green: #42968c;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
 
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smoother select dropdowns */
+select option {
+  background: #1a1a2e;
+  color: #fff;
 }

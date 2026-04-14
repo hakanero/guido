@@ -64,35 +64,39 @@ def describe_places(lat, lng, place_name, language):
 
     if not places:
         prompt = f"""
-        You are a helpful tour guide. The user is {location_context}.
+        You are a walking tour narrator. The listener is walking and hearing you through earphones. The user is {location_context}.
         
-        Currently, there are no significant mapped historical pins or landmarks exactly within 50 meters of this spot.
+        There are no mapped historical landmarks within 50 meters of this spot.
 
-        Give a short, pleasant, and generic orientation message about where they are standing. 
-        - DO NOT invent, guess, or hallucinate ANY specific buildings, factories, statues, plaques, or landmarks!
-        - DO NOT describe architecture that you aren't 100% sure exists here.
-        - Just acknowledge their location and encourage them to continue walking to find more historical sites.
-        - Keep the language factual, friendly, and brief (2-3 sentences max).  
-        - Respond to this prompt in the {language} language.
+        STRICT RULES:
+        - NEVER greet the listener. No "Hello", "Hi", "Hey", "Welcome", "Greetings", or ANY salutation. Not even "So" or "Well" or "Now" as opening words.
+        - Start mid-sentence as if you've been narrating all along. Example: "You're now passing through..." or "This stretch of road..."
+        - This is a CONTINUOUS narration — the listener has been walking and hearing you talk. Each segment should feel like a seamless continuation.
+        - Just describe where they are and note what direction to walk to find interesting sites.
+        - DO NOT invent or hallucinate ANY specific buildings, statues, or landmarks.
+        - Keep it to 2-3 sentences max.
+        - Respond in {language}.
         """
     else:
         place_info = [
             f"{p.get('name')} ({', '.join(p.get('types', []))})" for p in places
         ]
         prompt = f"""
-        You are a historical tour guide. A person is standing {location_context}.  
-        Here are the VERIFIED closest nearby places (all within 50 meters):
+        You are a walking tour narrator. The listener is walking and hearing you through earphones. They are {location_context}.
+        Here are the VERIFIED nearby places (within 50 meters):
 
         {chr(10).join(place_info)}
 
-        Your task:
-        - Describe the verified places listed above.
-        - CRITICAL: DO NOT invent, hallucinate, or guess ANY specific buildings, factories, statues, or plaques that are NOT in the list above!
-        - If possible, describe them in terms of direction from the person (e.g., "Nearby is...", "Right around here you'll find...").  
-        - Keep the language factual, engaging, and precise (4 sentences max).  
-        - Include brief historical notes if relevant to the provided places.  
-        - Avoid storytelling, no "imagine this," no fluff.  
-        - Respond to this prompt in the {language} language.
+        STRICT RULES:
+        - NEVER greet the listener. No "Hello", "Hi", "Hey", "Welcome", "Greetings", or ANY salutation. Not even "So" or "Well" or "Now" as opening words.
+        - Start mid-sentence as if you've been narrating all along. Example: "Just ahead is..." or "On your right you'll notice..."
+        - This is a CONTINUOUS narration — each segment should feel like a seamless continuation of an ongoing tour.
+        - Only describe the verified places listed above.
+        - CRITICAL: DO NOT invent or hallucinate ANY places not in the list.
+        - Use spatial language like "nearby", "just ahead", "right around here".
+        - Keep it factual, engaging, 4 sentences max. Include brief historical notes if relevant.
+        - No storytelling, no fluff.
+        - Respond in {language}.
         """
 
     response = client.models.generate_content(model="gemma-3-27b-it", contents=prompt)
