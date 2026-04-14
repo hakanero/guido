@@ -1,9 +1,20 @@
+"""
+check.py
+base version written during the HackHarvard Hackathon 2025
+by Rudransh Agrawal, Coleman Hayes
+
+Current version by Hakan Eroglu
+
+Generates audio tours of locations.
+"""
+
 from dotenv import load_dotenv
-from elevenlabs.client import ElevenLabs
 import os
 import requests
 from google import genai
 import tempfile
+import edge_tts
+import asyncio
 
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
@@ -26,18 +37,18 @@ def get_nearby_places(lat, lng, radius=50):
     out tags;
     """
     try:
-        response = requests.get(url, params={'data': query}, timeout=10)
+        response = requests.get(url, params={"data": query}, timeout=10)
         response.raise_for_status()
         data = response.json()
-        
+
         places = []
-        for element in data.get('elements', []):
-            tags = element.get('tags', {})
-            name = tags.get('name')
+        for element in data.get("elements", []):
+            tags = element.get("tags", {})
+            name = tags.get("name")
             if name:
-                kinds = [k for k in ['historic', 'tourism', 'amenity'] if k in tags]
+                kinds = [k for k in ["historic", "tourism", "amenity"] if k in tags]
                 # Avoid duplicates
-                if not any(p['name'] == name for p in places):
+                if not any(p["name"] == name for p in places):
                     places.append({"name": name, "types": kinds})
         return places[:5]
     except Exception as e:
@@ -106,33 +117,21 @@ def describe_places(lat, lng, place_name, language):
         - Respond to this prompt in the {language} language
         """
 
-    response = client.models.generate_content(
-        model="gemma-3-27b-it",
-        contents=prompt
-    )
+    response = client.models.generate_content(model="gemma-3-27b-it", contents=prompt)
     return response.text
 
 
 def speech(msg):
-    api_key = os.getenv("ELEVEN_API_KEY")
-    if not api_key:
-        raise ValueError("Missing ELEVEN_API_KEY!")
-
-    client = ElevenLabs(api_key=api_key)
-
     print("Tour Guide:", msg)
-
-    audio_stream = client.text_to_speech.convert(
-        text=msg,
-        voice_id="JBFqnCBsd6RMkjVDRZzb",
-        model_id="eleven_flash_v2_5",
-        output_format="mp3_44100_128",
-    )
+    voice = "en-US-ChristopherNeural"
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-        for chunk in audio_stream:
-            f.write(chunk)
-        return f.name
+        output_file = f.name
+
+    communicate = edge_tts.Communicate(msg, voice)
+    asyncio.run(communicate.save(output_file))
+
+    return output_file
 
 
 def generate_audio_for_location(lat, lng, place_name, language="English"):
