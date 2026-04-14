@@ -57,9 +57,12 @@ def generate_audio():
             except Exception as cleanup_error:
                 print(f"Warning: Failed to cleanup temp file {audio_path}: {cleanup_error}")
     
-    except ValueError:
-        return jsonify({"error": "Invalid latitude or longitude format"}), 400
     except Exception as e:
+        if isinstance(e, ValueError) and str(e) == "Missing ELEVEN_API_KEY!":
+            return jsonify({"error": "Missing ELEVEN_API_KEY environment variable"}), 500
+        elif isinstance(e, ValueError):
+            return jsonify({"error": "Invalid latitude or longitude format"}), 400
+        
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
@@ -105,9 +108,12 @@ def generate_audio_get():
             except Exception as cleanup_error:
                 print(f"Warning: Failed to cleanup temp file {audio_path}: {cleanup_error}")
     
-    except ValueError:
-        return jsonify({"error": "Invalid latitude or longitude format"}), 400
     except Exception as e:
+        if isinstance(e, ValueError) and str(e) == "Missing ELEVEN_API_KEY!":
+            return jsonify({"error": "Missing ELEVEN_API_KEY environment variable"}), 500
+        elif isinstance(e, ValueError):
+            return jsonify({"error": "Invalid latitude or longitude format"}), 400
+            
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
