@@ -8,6 +8,7 @@ import {
 import { motion } from "framer-motion";
 import { useLocation } from "./hooks/useLocationData";
 import { getData } from "./lib/api";
+import { haversineDistance } from "./lib/utils";
 import { useVoiceGuide } from "./hooks/useVoiceGuide";
 import { useState, useEffect, useRef } from "react";
 import NavigationPage from "./NavigationPage";
@@ -33,10 +34,10 @@ export default function App() {
 	useEffect(() => {
 		let mounted = true;
 
-		const coordsChanged =
-			currentCoords.lat !== coords.lat || currentCoords.lng !== coords.lng;
+		const distance = haversineDistance(currentCoords, coords);
+		const coordsChanged = distance > 0.005; // 5 meters
 
-		if (!coordsChanged) return;
+		if (!coordsChanged && !hasPreloadedNext) return;
 
 		setVisitedCoordinates(prev => {
 			const isDuplicate = prev.some(
