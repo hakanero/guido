@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { reverseGeocode } from "../lib/utils";
 
-export function useLocation(timeout = 10000): {
+export function useLocation(timeout = 15000): {
 	coords: { lat: number; lng: number };
 	placeName?: string;
 	locationError?: string;
@@ -11,6 +11,8 @@ export function useLocation(timeout = 10000): {
 		placeName?: string;
 	} | null>(null);
 	const [locationError, setLocationError] = useState<string | undefined>(undefined);
+	const retryCount = useRef(0);
+	const hasSucceeded = useRef(false);
 
 	useEffect(() => {
 		if (!navigator.geolocation) {
@@ -20,6 +22,8 @@ export function useLocation(timeout = 10000): {
 		}
 
 		const onSuccess = async (position: GeolocationPosition) => {
+			hasSucceeded.current = true;
+			retryCount.current = 0;
 			setLocationError(undefined);
 			setLocation({
 				coords: {
@@ -38,30 +42,51 @@ export function useLocation(timeout = 10000): {
 
 		const onError = (error: GeolocationPositionError) => {
 			console.error("Error getting location:", error);
+
+			// On transient errors, retry up to 3 times with increasing timeout
+			if (
+				!hasSucceeded.current &&
+				retryCount.current < 3 &&
+				error.code !== error.PERMISSION_DENIED
+			) {
+				retryCount.current++;
+				console.log(`Location retry ${retryCount.current}/3...`);
+				setTimeout(() => {
+					navigator.geolocation.getCurrentPosition(
+						onSuccess,
+						onError,
+						{ enableHighAccuracy: true, timeout: timeout + retryCount.current * 5000, maximumAge: 30000 }
+					);
+				}, 2000);
+				return;
+			}
+
 			if (error.code === error.PERMISSION_DENIED) {
-				setLocationError("Location access denied. Please enable location services to use this app.");
+				setLocationError("Location access denied. Please enable location services.");
 			} else if (error.code === error.POSITION_UNAVAILABLE) {
-				setLocationError("Location information is unavailable.");
+				setLocationError("Location unavailable. Check Settings → Privacy → Location Services.");
 			} else if (error.code === error.TIMEOUT) {
-				setLocationError("Location request timed out.");
+				setLocationError("Location request timed out. Try reloading the page.");
 			} else {
-				setLocationError("An unknown error occurred while getting your location.");
+				setLocationError("Could not determine your location.");
 			}
 		};
 
-		const options = {
+		// First attempt: accept cached positions up to 30s old (helps on wake from sleep)
+		navigator.geolocation.getCurrentPosition(onSuccess, onError, {
 			enableHighAccuracy: true,
 			timeout: timeout,
-			maximumAge: 0,
-		};
+			maximumAge: 30000,
+		});
 
-		navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+		// Also use watchPosition for continuous updates (more reliable than polling)
+		const watchId = navigator.geolocation.watchPosition(onSuccess, onError, {
+			enableHighAccuracy: true,
+			timeout: timeout,
+			maximumAge: 10000,
+		});
 
-		const intervalId = setInterval(() => {
-			navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-		}, 60000);
-
-		return () => clearInterval(intervalId);
+		return () => navigator.geolocation.clearWatch(watchId);
 	}, [timeout]);
 
 	return (
