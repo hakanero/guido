@@ -40,7 +40,8 @@ export default function App() {
 	const latestCoordsRef = useRef(coords);
 	const lastFetchCoordsRef = useRef<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
 	const hasFetchedInitial = useRef(false);
-	const isFetchingRef = useRef(false); // prevent concurrent fetches
+	const isFetchingRef = useRef(false);
+	const viewRef = useRef<AppView>("landing"); // track view in a ref for effects
 
 	// Keep ref up-to-date with latest coords (no effects depend on this)
 	latestCoordsRef.current = coords;
@@ -55,6 +56,9 @@ export default function App() {
 	const [view, setView] = useState<AppView>("landing");
 	const [authMode, setAuthMode] = useState<"login" | "register">("login");
 	const [page, setPage] = useState<MainPage>("home");
+
+	// Keep viewRef in sync
+	viewRef.current = view;
 
 	// Usage timer
 	const [usageStartTime] = useState<number>(Date.now());
@@ -135,9 +139,10 @@ export default function App() {
 		[audioRef, playbackSpeed, setupAudioListeners]
 	);
 
-	// ---- 1. Initial fetch (runs once when we get real coordinates) ----
+	// ---- 1. Initial fetch (runs once when we get real coordinates AND user is on main view) ----
 	useEffect(() => {
 		if (hasFetchedInitial.current) return;
+		if (viewRef.current !== "main") return; // Don't fetch on landing/auth pages
 
 		const isDefault =
 			Math.abs(coords.lat - 42.3736) < 0.0001 &&
@@ -152,7 +157,7 @@ export default function App() {
 			if (result) loadAudio(result.voiceUrl, result.transcript, false);
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [coords.lat, coords.lng]);
+	}, [coords.lat, coords.lng, view]);
 
 	// ---- 2. Track visited coordinates for the polyline (display only, no fetches) ----
 	useEffect(() => {

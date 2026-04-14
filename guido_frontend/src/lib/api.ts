@@ -17,6 +17,19 @@ function authHeaders(): Record<string, string> {
 	return { Authorization: `Bearer ${token}` };
 }
 
+async function safeJson(res: Response) {
+	const text = await res.text();
+	try {
+		return JSON.parse(text);
+	} catch {
+		throw new Error(
+			res.ok
+				? "Server returned invalid response"
+				: `Server error (${res.status}): auth endpoint not available`
+		);
+	}
+}
+
 // ---- Auth API ----
 
 export async function apiRegister(
@@ -33,8 +46,8 @@ export async function apiRegister(
 			display_name: displayName,
 		}),
 	});
-	const data = await res.json();
-	if (!res.ok) throw new Error(data.error || "Registration failed");
+	const data = await safeJson(res);
+	if (!res.ok) throw new Error(data?.error || "Registration failed");
 	localStorage.setItem("guido_token", data.token);
 	localStorage.setItem("guido_session_id", String(data.session_id));
 	return data;
@@ -46,8 +59,8 @@ export async function apiLogin(email: string, password: string) {
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ email, password }),
 	});
-	const data = await res.json();
-	if (!res.ok) throw new Error(data.error || "Login failed");
+	const data = await safeJson(res);
+	if (!res.ok) throw new Error(data?.error || "Login failed");
 	localStorage.setItem("guido_token", data.token);
 	localStorage.setItem("guido_session_id", String(data.session_id));
 	return data;
@@ -77,7 +90,7 @@ export async function apiGetMe() {
 		headers: authHeaders(),
 	});
 	if (!res.ok) return null;
-	return res.json();
+	return safeJson(res);
 }
 
 // ---- Location tracking API ----
