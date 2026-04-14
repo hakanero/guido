@@ -13,8 +13,7 @@ import os
 import requests
 from google import genai
 import tempfile
-import edge_tts
-import asyncio
+from gtts import gTTS
 
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
@@ -122,14 +121,16 @@ def describe_places(lat, lng, place_name, language):
 
 
 def speech(msg):
-    print("Tour Guide:", msg)
-    voice = "en-US-ChristopherNeural"
+    print("Tour Guide generating TTS...")
+    
+    # We use tld="com.au" to give it a slightly fun Australian accent. 
+    # Unfortunately gTTS does not natively support pitching down or speeding up.
+    tts = gTTS(text=msg, lang="en", tld="com.au")
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
         output_file = f.name
 
-    communicate = edge_tts.Communicate(msg, voice)
-    asyncio.run(communicate.save(output_file))
+    tts.save(output_file)
 
     return output_file
 
