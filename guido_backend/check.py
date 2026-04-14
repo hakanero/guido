@@ -64,56 +64,35 @@ def describe_places(lat, lng, place_name, language):
 
     if not places:
         prompt = f"""
-        You are an information assistant. There are no significant pins or landmarks 
-        returned for a person standing {location_context}. 
+        You are a helpful tour guide. The user is {location_context}.
+        
+        Currently, there are no significant mapped historical pins or landmarks exactly within 50 meters of this spot.
 
-        Give a short, factual description of what is IMMEDIATELY around this exact location 
-        within 20-30 meters ONLY. 
-
-        -Give names of specific buildings, entrances, pathways, statues, plaques,
-        - point out any historical markers or notable architectural features.
-        - Do NOT describe weather, trees, skies, or generic scenery.  
-        - Do NOT mention large landmarks or areas unless the person is standing directly at them.
-        - Only describe what is in the IMMEDIATE vicinity: specific buildings, entrances, 
-        pathways, statues, plaques, or architectural features RIGHT where they're standing.
-        - If possible, describe them in terms of direction from the person: 
-        "Directly in front of you is...", "To your immediate left is...", etc.  
-        - Be HYPERSPECIFIC about the exact spot, not the general area.
-        - Keep the language factual, and precise (5 sentences max).  
-        - Include historical notes if relevant.  
-        - Avoid storytelling, no "imagine this," no "alright everyone," no fluff.  
-        - Respond to this prompt in the {language} language
+        Give a short, pleasant, and generic orientation message about where they are standing. 
+        - DO NOT invent, guess, or hallucinate ANY specific buildings, factories, statues, plaques, or landmarks!
+        - DO NOT describe architecture that you aren't 100% sure exists here.
+        - Just acknowledge their location and encourage them to continue walking to find more historical sites.
+        - Keep the language factual, friendly, and brief (2-3 sentences max).  
+        - Respond to this prompt in the {language} language.
         """
     else:
         place_info = [
             f"{p.get('name')} ({', '.join(p.get('types', []))})" for p in places
         ]
         prompt = f"""
-        You are an information assistant. A person is standing at {location_context}.  
-        Here are the closest nearby places (all within 50 meters):
+        You are a historical tour guide. A person is standing {location_context}.  
+        Here are the VERIFIED closest nearby places (all within 50 meters):
 
         {chr(10).join(place_info)}
 
         Your task:
-        -Give names of specific buildings, entrances, pathways, statues, plaques,
-        - point out any historical markers or notable architectural features.
-        - Do NOT describe weather, trees, skies, or generic scenery.  
-        - Do NOT mention large landmarks or areas unless the person is standing directly at them.
-        - Only describe what is in the IMMEDIATE vicinity: specific buildings, entrances, 
-        pathways, statues, plaques, or architectural features RIGHT where they're standing.
-        - If possible, describe them in terms of direction from the person: 
-        "Directly in front of you is...", "To your immediate left is...", etc.  
-        - Be HYPERSPECIFIC about the exact spot, not the general area.
-        - Keep the language factual, and precise (5 sentences max).  
-        - Include historical notes if relevant.  
-        - Avoid storytelling, no "imagine this," no "alright everyone," no fluff.  
-        - DO NOT describe generic shops, hotels, gyms, or residential apartments unless
-        they are historically/culturally important to THIS EXACT SPOT.
-        talk about buildings that have names for example Harvard Law School, the White House etc.
-        - Talk in order first talk about buildings exactly beside and near the person and then start further away, be more precise
-        you can do it 
-        - also dont keep talking about the same area even if we moved away update frequently
-        - Respond to this prompt in the {language} language
+        - Describe the verified places listed above.
+        - CRITICAL: DO NOT invent, hallucinate, or guess ANY specific buildings, factories, statues, or plaques that are NOT in the list above!
+        - If possible, describe them in terms of direction from the person (e.g., "Nearby is...", "Right around here you'll find...").  
+        - Keep the language factual, engaging, and precise (4 sentences max).  
+        - Include brief historical notes if relevant to the provided places.  
+        - Avoid storytelling, no "imagine this," no fluff.  
+        - Respond to this prompt in the {language} language.
         """
 
     response = client.models.generate_content(model="gemma-3-27b-it", contents=prompt)
