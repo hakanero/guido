@@ -74,6 +74,7 @@ def describe_places(lat, lng, place_name, language):
         - This is a CONTINUOUS narration — the listener has been walking and hearing you talk. Each segment should feel like a seamless continuation.
         - Just describe where they are and note what direction to walk to find interesting sites.
         - DO NOT invent or hallucinate ANY specific buildings, statues, or landmarks.
+        - NEVER state specific years, dates, seat counts, dimensions, architect names, costs, or any numerical facts. You WILL get them wrong. Only describe in general terms.
         - Keep it to 2-3 sentences max.
         - Respond in {language}.
         """
@@ -91,10 +92,11 @@ def describe_places(lat, lng, place_name, language):
         - NEVER greet the listener. No "Hello", "Hi", "Hey", "Welcome", "Greetings", or ANY salutation. Not even "So" or "Well" or "Now" as opening words.
         - Start mid-sentence as if you've been narrating all along. Example: "Just ahead is..." or "On your right you'll notice..."
         - This is a CONTINUOUS narration — each segment should feel like a seamless continuation of an ongoing tour.
-        - Only describe the verified places listed above.
+        - Only describe the verified places listed above by their name and general purpose/type.
         - CRITICAL: DO NOT invent or hallucinate ANY places not in the list.
+        - NEVER state specific years, dates, opening years, seat counts, square footage, architect names, costs, or any numerical facts. You WILL get them wrong. Describe only in general terms (e.g. "a performing arts center" not "a 500-seat theater completed in 2007").
         - Use spatial language like "nearby", "just ahead", "right around here".
-        - Keep it factual, engaging, 4 sentences max. Include brief historical notes if relevant.
+        - Keep it factual, engaging, 4 sentences max.
         - No storytelling, no fluff.
         - Respond in {language}.
         """
