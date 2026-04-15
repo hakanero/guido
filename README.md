@@ -238,10 +238,10 @@ The production build is output to `dist/`. Deploy it to any static hosting provi
 
 ## Project History
 
-Guido originated at **HackHarvard 2025**, built by Rudransh Agrawal and Coleman Hayes. The current version has been substantially rewritten and expanded by Hakan Eroglu — migrating from the Google Maps API to OpenStreetMap Overpass, replacing ElevenLabs TTS with gTTS, upgrading the AI model to Gemma, adding user authentication and session tracking, and building a full React frontend.
+Guido originated at **HackHarvard 2025**, built by Rudransh Agrawal, Coleman Hayes, Nur-e Jannat Annika, and Hakan Eroglu. The current version has been substantially rewritten and expanded by Hakan Eroglu: migrating from the Google Maps API to OpenStreetMap Overpass, replacing ElevenLabs TTS with gTTS, upgrading the AI model to Gemma, adding user authentication and session tracking, and building a full React frontend.
 
 ---
 
 ## License
 
-This project is not currently published under an open-source license. All rights reserved.
+This project is NOT currently published under an open-source license. All rights reserved.
