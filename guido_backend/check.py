@@ -17,6 +17,7 @@ from gtts import gTTS
 
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
+GEMMA_MODEL = "gemma-4-26b-a4b-it"
 
 client = genai.Client(api_key=GENAI_API_KEY)
 
@@ -101,14 +102,14 @@ def describe_places(lat, lng, place_name, language):
         - Respond in {language}.
         """
 
-    response = client.models.generate_content(model="gemma-3-27b-it", contents=prompt)
+    response = client.models.generate_content(model=GEMMA_MODEL, contents=prompt)
     return response.text
 
 
 def speech(msg):
     print("Tour Guide generating TTS...")
-    
-    # We use tld="com.au" to give it a slightly fun Australian accent. 
+
+    # We use tld="com.au" to give it a slightly fun Australian accent.
     # Unfortunately gTTS does not natively support pitching down or speeding up.
     tts = gTTS(text=msg, lang="en", tld="com.au")
 
