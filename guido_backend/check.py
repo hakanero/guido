@@ -17,7 +17,7 @@ from gtts import gTTS
 
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
-GEMINI_MODEL = "gemini-1.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 client = genai.Client(api_key=GENAI_API_KEY)
 
