@@ -17,7 +17,7 @@ from gtts import gTTS
 
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
-GEMMA_MODEL = "gemma-4-26b-a4b-it"
+GEMINI_MODEL = "gemini-1.5-flash"
 
 client = genai.Client(api_key=GENAI_API_KEY)
 
@@ -102,7 +102,7 @@ def describe_places(lat, lng, place_name, language):
         - Respond in {language}.
         """
 
-    response = client.models.generate_content(model=GEMMA_MODEL, contents=prompt)
+    response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
     return response.text
 
 
