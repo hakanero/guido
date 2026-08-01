@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify, g
+from flask import Flask, request, send_file, jsonify, g, send_from_directory
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
@@ -14,9 +14,14 @@ from auth import (
 
 load_dotenv()
 
-app = Flask(__name__)
+dist_path = os.path.join(os.path.dirname(__file__), 'dist')
+app = Flask(__name__, static_folder=dist_path, static_url_path='')
 
-CORS(app)
+CORS(app, origins=[
+    "http://localhost:3002",
+    "http://127.0.0.1:3002",
+    "https://guido.byhero.app"
+])
 
 # Initialize database tables on startup
 try:
@@ -24,6 +29,20 @@ try:
 except Exception as e:
     print(f"Warning: Could not initialize database: {e}")
     print("Auth and location features will not work until DATABASE_URL is configured.")
+
+
+# ---------------------------------------------------------------------------
+# Serve frontend
+# ---------------------------------------------------------------------------
+@app.route("/", methods=["GET"])
+def serve_index():
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/<path:path>", methods=["GET"])
+def serve_static(path):
+    if os.path.isfile(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, "index.html")
 
 
 # ---------------------------------------------------------------------------
@@ -368,5 +387,5 @@ def generate_audio_get():
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8080))
+    port = int(os.getenv("PORT", 3002))
     app.run(host="0.0.0.0", port=port, debug=False)

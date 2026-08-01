@@ -1,6 +1,6 @@
 const API_BASE = import.meta.env.VITE_BACKEND_URL
 	? import.meta.env.VITE_BACKEND_URL.replace(/\/$/, "")
-	: "http://localhost:8080";
+	: "";
 
 function getToken(): string | null {
 	return localStorage.getItem("guido_token");

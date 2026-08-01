@@ -12,4 +12,7 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
+  build: {
+    outDir: '../guido_backend/dist',
+  },
 })
